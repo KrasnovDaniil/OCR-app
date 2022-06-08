@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Application</title>
+</head>
+<style>
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    /* The Modal (background) */
+    .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0, 0, 0); /* Fallback color */
+        background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+        -webkit-animation-name: fadeIn; /* Fade in the background */
+        -webkit-animation-duration: 0.4s;
+        animation-name: fadeIn;
+        animation-duration: 0.4s
+    }
+
+    /* Modal Content */
+    .modal-content {
+        position: fixed;
+        bottom: 0;
+        background-color: #fefefe;
+        width: 100%;
+        -webkit-animation-name: slideIn;
+        -webkit-animation-duration: 0.4s;
+        animation-name: slideIn;
+        animation-duration: 0.4s
+    }
+
+    /* The Close Button */
+    .close {
+        color: white;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: #000;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .modal-header {
+        padding: 2px 16px;
+        background-color: #5cb85c;
+        color: white;
+    }
+
+    .modal-body {
+        padding: 2px 16px;
+    }
+
+    .modal-footer {
+        padding: 2px 16px;
+        background-color: #5cb85c;
+        color: white;
+    }
+
+    /* Add Animation */
+    @-webkit-keyframes slideIn {
+        from {
+            bottom: -300px;
+            opacity: 0
+        }
+        to {
+            bottom: 0;
+            opacity: 1
+        }
+    }
+
+    @keyframes slideIn {
+        from {
+            bottom: -300px;
+            opacity: 0
+        }
+        to {
+            bottom: 0;
+            opacity: 1
+        }
+    }
+
+    @-webkit-keyframes fadeIn {
+        from {
+            opacity: 0
+        }
+        to {
+            opacity: 1
+        }
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0
+        }
+        to {
+            opacity: 1
+        }
+    }
+</style>
+<body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<!--<script src="/home/daniilkr/Desktop/docker-backend/docker-backend/marketplace_ai/templates/test.js"></script> -->
+<!-- Modal content -->
+<!-- Trigger/Open The Modal -->
+<button id="myBtn">Open Modal</button>
+
+<!-- The Modal -->
+<div id="myModal" class="modal" style="display: block">
+    <!-- Modal content -->
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="close">&times;</span>
+            <h2>Modal Header</h2>
+        </div>
+        <div class="modal-body">
+            <p>Настройка горячих клавиш</p>
+            <div>
+                <ul id="shortcut_inputs" style="list-style: none">
+                    <li>
+                        <input class="shortcut_key" placeholder="Горячая клавиша 1">
+                        <input class="shortcut_word" placeholder="Слово 1">
+                    </li>
+                    <li>
+                        <input type="text" class="shortcut_key" placeholder="Горячая клавиша 2">
+                        <input type="text" class="shortcut_word" placeholder="Слово 2">
+                    </li>
+                    <li>
+                        <input type="text" class="shortcut_key" placeholder="Горячая клавиша 3">
+                        <input type="text" class="shortcut_word" placeholder="Слово 3">
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <h3>Modal Footer</h3>
+        </div>
+    </div>
+
+</div>
+
+<ul>
+    <li><input type="text"></li>
+    <li><input type="text"></li>
+    <li><input type="text"></li>
+    <li><input type="text"></li>
+</ul>
+
+</body>
+
+<script>
+    (function(){
+         // TODO:
+        //    [*] Незаполненные поля должны игнорироваться при вставке
+        //    [*] Шорткаты должны быть уникальными
+        //    [*] Шорткаты должны быть одним из функц. клавиш F[1-12]
+        //    [*] Шорткаты должны быть одним из сочетаний с Shift+[0-9], Ctrl+[a-z], Alt+[a-z]
+
+        const modal = document.getElementById("myModal");
+        const btn = document.getElementById("myBtn");
+        const span = document.getElementsByClassName("close")[0];
+        const fields = document.getElementById("shortcut_inputs").children;
+        const keys = document.getElementsByClassName('shortcut_key');
+        const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+        const digits = '0123456789';
+        const forbidden_shortcuts = ['Space', 'Enter', 'Backspace', 'AltLeft', 'AltRight', 'ControlLeft',
+            'ControlRight', 'CapsLock', 'ShiftLeft', 'ShiftRight', 'Tab', 'Escape']
+
+
+        // TODO: Maybe fill that fields from localStorage? If User wants to store them in future
+        // Initial creating & setting `is_valid` fields
+        for (let item of fields) {
+            const inputs = item.children;
+            item.is_valid = !!(inputs[0].value && inputs[1].value);
+        }
+
+        btn.onclick = function () {
+            modal.style.display = "block";
+            document.onkeydown = null;
+        }
+
+        span.onclick = function () {
+            modal.style.display = "none";
+            document.onkeydown = KeySnippet;
+        }
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function (event) {
+            if (event.target === modal) {
+                modal.style.display = "none";
+                document.onkeydown = KeySnippet;
+            }
+        }
+
+        /**
+         * Main function - insert stored word by appropriate shortcut
+         * @param event {KeyboardEvent}
+         * @constructor
+         */
+        function KeySnippet(event) {
+            if (get_value(event.key)) {
+                event.preventDefault();
+                event.target.value = get_value(event.key);
+            }
+        }
+
+        /**
+         * Check if key is unique.
+         * @param key {string} - KeyboardEvent.key
+         * @returns {boolean}
+         */
+        function check_unique(key){
+            for (let item of keys)
+                if (key === item.value)
+                    return false;
+            return true;
+        }
+
+
+        /**
+         * Valid pressed key combination to according rules.
+         * Allows: Ctrl+[a-z] | Alt+[a-z] | Shift+[0-9] | F[1-12]
+         * @param event {KeyboardEvent}
+         * @returns {boolean}
+         */
+        function valid_shortcut(event){
+            if (!check_unique(event.key)) return false;
+            switch (event){
+                case event.key in digits:
+                    case event.shiftKey:
+                        return true;
+                case event.key in alphabet:
+                    case event.ctrlKey || event.altKey:
+                        return true;
+                case event.which >= 112 && event.which <= 123:
+                    return true;
+            }
+            return false;
+        }
+
+        /**
+         * Get value by key from data fields.
+         * @param key {string} - KeyboardEvent.key
+         * @returns {string|*}
+         */
+        function get_value(key){
+            for (let item of fields){
+                const inputs = item.children;
+                if (key === inputs[0].value && item.is_valid)
+                    return inputs[1].value;
+            }
+            return '';
+        }
+
+        /**
+         * Put valid shortcut at data shortcut fields
+         */
+        $('.shortcut_key').on('keydown', function(event){
+            // if (event.key in forbidden_shortcuts || (event.code <= 90 && event.code >= 65) )
+            // Только функциональные клавиши - F[1-12]
+            event.preventDefault();
+            this.parentElement.is_valid = false;
+            if (!valid_shortcut(event))
+                return;
+            this.value = event.code;
+            const word_input = event.target.nextElementSibling;
+            if (word_input.value) {
+                this.parentElement.is_valid = true;
+            }
+        })
+
+
+        /**
+         * Put paste word in data fields.
+         * Isn't allowed: empty strings, ?js-injection
+         */
+        $('.shortcut_word').on('change', function(event){
+            this.parentElement.is_valid = false;
+            // TODO: Мб сделать проверку на js-инъекции?
+            if (!this.value){
+                return;
+            }
+            const shortcut_input = event.target.previousElementSibling;
+            if (shortcut_input.value){
+                this.parentElement.is_valid = true;
+            }
+        })
+
+    })();
+
+
+</script>
+</html>
